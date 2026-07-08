@@ -1,0 +1,26 @@
+# ESP-IDF build artifacts
+build/
+sdkconfig
+sdkconfig.old
+
+# Managed components (pulled from the registry on build)
+managed_components/
+dependencies.lock
+
+# Secrets (shared by firmware build + release.py) + generated artifacts
+.env
+releases/
+
+# Firmware signing key — ROOT OF TRUST. NEVER commit. Back it up off-machine.
+secure_boot_signing_key.pem
+*.pem
+
+# Editor / OS
+.vscode/settings.json
+*.swp
+.DS_Store
+
+# Tooling caches / generated
+.cache/
+__pycache__/
+.embedder/

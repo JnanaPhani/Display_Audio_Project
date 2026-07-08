@@ -1,0 +1,5 @@
+## Barcode scanner component manifest.
+## Declares the USB HID host dependency so this component is drop-in reusable.
+dependencies:
+  idf: ">=5.0"
+  espressif/usb_host_hid: "^1.0.1"

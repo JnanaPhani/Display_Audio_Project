@@ -1,0 +1,5 @@
+## Managed component dependencies for the smart_token_display application.
+dependencies:
+  idf: ">=5.0"
+  espressif/usb_host_hid: "^1.0.1"
+  espressif/esp_websocket_client: "^1.2.0"
