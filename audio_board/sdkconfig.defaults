@@ -1,0 +1,56 @@
+# Custom OTA-capable partition table (4 MB flash)
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+
+# The P10 refresh task is a tight busy loop pinned to core 1; do not let the
+# task watchdog trip on its starved idle task.
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n
+
+# Same rationale for the Interrupt Watchdog: the dedicated P10 bit-bang loop on
+# core 1 (plus Wi-Fi/lwIP load once networking starts in the background) can keep
+# CPU1's tick interrupt from being serviced within the 300 ms IWDT window,
+# causing a TG1WDT_SYS_RST reboot loop. CPU1 runs only the P10 refresh loop, so
+# stop the IWDT from watching CPU1's tick. CPU0 (app + Wi-Fi) is still watched.
+CONFIG_ESP_INT_WDT_CHECK_CPU1=n
+
+# Use the certificate bundle for TLS (Supabase HTTPS / WSS).
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+
+# Log timestamps: use system (wall-clock) time instead of ms-since-boot, so log
+# lines read HH:MM:SS.mmm once SNTP has synced the RTC (before sync they show
+# time from the 1970 epoch). Applies to every ESP_LOGx line globally.
+CONFIG_LOG_TIMESTAMP_SOURCE_SYSTEM=y
+
+# --- Field reliability: OTA rollback + crash capture ---------------------------
+# Rollback: a freshly OTA'd app boots in PENDING_VERIFY and must call
+# esp_ota_mark_app_valid_cancel_rollback() (after our self-test passes) or the
+# bootloader reverts to the previous working image on the next reset. This stops
+# a bad OTA from bricking the fleet.
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# Core dump to the dedicated 'coredump' flash partition (ELF format) so a crash
+# backtrace survives the reboot and can be uploaded to Supabase + decoded with
+# addr2line against the matching .elf.
+CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH=y
+CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF=y
+CONFIG_ESP_COREDUMP_CHECKSUM_CRC32=y
+CONFIG_ESP_COREDUMP_STACK_SIZE=1024
+
+# --- Signed OTA verification (NO hardware Secure Boot, NO eFuse burn) ----------
+# Each app carries an RSA-3072 signature block; the running app verifies the
+# signature of any NEW OTA image against its embedded public key before booting
+# it. A tampered/unsigned image is refused even over valid HTTPS from the right
+# host (defense-in-depth with the bin_url host check in ota.c). Reversible:
+# nothing is burned to eFuse. The build is left UNSIGNED here
+# (BUILD_SIGNED_BINARIES off) — release.py signs the binary with the private key
+# (secure_boot_signing_key.pem) at release time, so the key stays out of the
+# build config. The FIRST signed image must be cable-flashed once.
+CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT=y
+CONFIG_SECURE_SIGNED_APPS_RSA_SCHEME=y
+# CONFIG_SECURE_SIGNED_ON_BOOT_NO_SECURE_BOOT is not set
+CONFIG_SECURE_SIGNED_ON_UPDATE_NO_SECURE_BOOT=y
+# CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES is not set
+# CONFIG_SECURE_BOOT is not set
