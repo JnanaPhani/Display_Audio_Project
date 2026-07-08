@@ -1,0 +1,11 @@
+version: "1.0.0"
+description: >-
+  Portable bit-banged driver for a single red P10 32x16 HUB12 1/4-scan LED
+  matrix panel on ESP32 / ESP32-S3. Runtime-configurable pins, polarity and
+  pulse timing, with 5x7 text and 7x11 big-digit fonts and brightness control.
+url: https://github.com/zenithtek/p10display
+targets:
+  - esp32
+  - esp32s3
+dependencies:
+  idf: ">=5.0"
