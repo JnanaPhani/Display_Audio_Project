@@ -145,30 +145,25 @@ and `device_status` rows silently fail to insert.
 
 ---
 
-## 7. ESP-NOW + the single-channel rule (important for deployment)
+## 7. ESP-NOW & Channel-Hopping Coexistence
 
-The ESP32 radio is on **one channel at a time**. While connected to the router,
-it sits on the **router's channel**, and ESP-NOW rides on that channel. For
-ESP-NOW to keep working when the **router is off**, the whole fleet must share a
-**fixed channel**:
+The ESP32-S3 radio can only operate on **one physical channel at a time**. 
+* When the Audio Board connects to your shop's Wi-Fi router, the router forces the Audio Board's radio channel to match the router's active channel (e.g. Channel 7).
+* If the Display Board is **offline** (not provisioned or router is down), it defaults to **Channel 1**.
 
-1. **Lock the shop router's 2.4 GHz band to a fixed channel** (1, 6, or 11 — pick
-   the least-crowded with a Wi-Fi analyzer app). This does **not** change the
-   SSID/password; your phones/laptops auto-reconnect on the new channel.
-2. Set **`ESPNOW_CHANNEL`** in `main/inc/espnow.h` to that same channel
-   (default `1`). **Router channel and `ESPNOW_CHANNEL` must match.**
-3. The gateway (7th ESP) is permanently pinned to that channel and never joins
-   the router, so it's unaffected by outages.
-4. On STA disconnect, senders re-pin the radio to `ESPNOW_CHANNEL`
-   (`espnow_repin_channel()`), so announcements keep flowing with no router.
+Because of this channel mismatch, the Display Board uses an **offline channel-hopping mechanism**:
+1. **Online Transmission:** If the Display Board is connected to the Wi-Fi router, it sends ESP-NOW packets directly on the active router channel.
+2. **Offline Transmission:** If the Display Board is offline, it cycles its radio across **channels 1 to 11** in a rapid loop, sending the scan message on each channel. This ensures that the Audio Board receives the announcement regardless of which channel the router assigned to it.
 
-**Packet format** (`espnow_scan_msg_t` in `espnow.h`): a ~96-byte packed binary
-struct (version, order_type, status, display_num, token, order_id, event_date,
-sender MAC, seq) — well under the 250-byte ESP-NOW limit.
+**Packet format** (`espnow_scan_msg_t` in `espnow.h`): a ~96-byte packed binary struct (version, order_type, status, display_num, token, order_id, event_date, sender MAC, seq) — well under the 250-byte ESP-NOW limit.
 
-The gateway is a separate firmware: it sets `WIFI_PS_NONE`, pins to
-`ESPNOW_CHANNEL`, `esp_now_init()`, registers a receive callback, checks
-`version`, and announces `display_num`.
+---
+
+## 7a. USB Barcode Scanner Power & Brownouts
+
+During a scan, the USB Host library handles the barcode reader while the Wi-Fi radio transmits the ESP-NOW packet. 
+* **The Issue:** The scanner draws ~150–200mA during active decoding, and the ESP32-S3 Wi-Fi transmitter draws ~250–300mA. If the board is powered by a low-current USB port or a poor-quality cable, the voltage drops, triggering the hardware Brownout Detector (`BOD: Brownout detector was triggered`) and rebooting the device.
+* **The Solution:** Power the Display Board from a high-quality USB-3.0 port, a dedicated phone charger, or add a large decoupling capacitor (e.g. 470uF or 1000uF) across the 5V and GND pins to buffer the current spikes.
 
 ---
 
