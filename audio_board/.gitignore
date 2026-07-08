@@ -1,0 +1,16 @@
+# ESP-IDF build artifacts
+build/
+sdkconfig
+sdkconfig.old
+dependencies.lock
+managed_components/
+
+# Caches and editor configurations
+.cache/
+.vscode/
+.idea/
+
+# Local configuration and private keys (SECURITY)
+.env
+*.pem
+*.key
