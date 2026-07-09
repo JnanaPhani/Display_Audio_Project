@@ -63,6 +63,44 @@ static void on_recv(const esp_now_recv_info_t *recv_info, const uint8_t *data, i
         return;
     }
 
+    // Deduplication check: ignore duplicate seq numbers from the same sender within 2 seconds
+    #define MAX_DEDUP_SENDERS 8
+    static struct {
+        uint8_t mac[6];
+        uint32_t last_seq;
+        uint32_t last_time_ms;
+        bool active;
+    } s_senders[MAX_DEDUP_SENDERS] = {0};
+
+    uint32_t now_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
+    int sender_idx = -1;
+    for (int i = 0; i < MAX_DEDUP_SENDERS; i++) {
+        if (s_senders[i].active && memcmp(s_senders[i].mac, recv_info->src_addr, 6) == 0) {
+            sender_idx = i;
+            break;
+        }
+    }
+
+    if (sender_idx != -1) {
+        if (msg->seq == s_senders[sender_idx].last_seq && (now_ms - s_senders[sender_idx].last_time_ms < 2000)) {
+            // Discard duplicate from the same channel-hopping burst
+            return;
+        }
+        s_senders[sender_idx].last_seq = msg->seq;
+        s_senders[sender_idx].last_time_ms = now_ms;
+    } else {
+        // Find empty slot to register new sender
+        for (int i = 0; i < MAX_DEDUP_SENDERS; i++) {
+            if (!s_senders[i].active) {
+                memcpy(s_senders[i].mac, recv_info->src_addr, 6);
+                s_senders[i].last_seq = msg->seq;
+                s_senders[i].last_time_ms = now_ms;
+                s_senders[i].active = true;
+                break;
+            }
+        }
+    }
+
     ESP_LOGI(TAG_NOW, "Recv from %02X:%02X:%02X:%02X:%02X:%02X: type=%d status=%d display_num=%ld token=%s",
              recv_info->src_addr[0], recv_info->src_addr[1], recv_info->src_addr[2],
              recv_info->src_addr[3], recv_info->src_addr[4], recv_info->src_addr[5],
