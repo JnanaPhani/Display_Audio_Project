@@ -206,10 +206,20 @@ void set_provisioning_flag(void) {
 void get_device_service_name(char *service_name, size_t max)
 {
     uint8_t eth_mac[6];
-    const char *ssid_prefix = "PROV_";
     esp_wifi_get_mac(WIFI_IF_STA, eth_mac);
-    snprintf(service_name, max, "%s%02X%02X%02X",
-             ssid_prefix, eth_mac[3], eth_mac[4], eth_mac[5]);
+    
+    // Format device type in uppercase
+    char dev_type_caps[32];
+    strncpy(dev_type_caps, DEVICE_TYPE, sizeof(dev_type_caps) - 1);
+    dev_type_caps[sizeof(dev_type_caps) - 1] = '\0';
+    for (int i = 0; dev_type_caps[i]; i++) {
+        if (dev_type_caps[i] >= 'a' && dev_type_caps[i] <= 'z') {
+            dev_type_caps[i] -= 32;
+        }
+    }
+
+    snprintf(service_name, max, "ZT_%s_%02X%02X%02X%02X%02X%02X", dev_type_caps,
+             eth_mac[0], eth_mac[1], eth_mac[2], eth_mac[3], eth_mac[4], eth_mac[5]);
 }
 
 
@@ -284,7 +294,7 @@ void do_provisioning(void)
         *     - Wi-Fi SSID when scheme is wifi_prov_scheme_softap
         *     - device name when scheme is wifi_prov_scheme_ble
         */
-    char service_name[12];
+    char service_name[32];
     get_device_service_name(service_name, sizeof(service_name));
 
     wifi_prov_security_t security = WIFI_PROV_SECURITY_2;
