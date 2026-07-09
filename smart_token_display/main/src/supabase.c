@@ -21,6 +21,33 @@ extern const char *G_REBOOT_REASON_STR;
 extern uint32_t G_BROWNOUT_COUNT;
 
 static esp_websocket_client_handle_t ws_client = NULL;
+static int s_consecutive_heartbeat_failures = 0;
+
+struct response_buffer {
+  char *buf;
+  int idx;
+  int size;
+};
+
+static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
+  switch (evt->event_id) {
+    case HTTP_EVENT_ON_DATA:
+      if (evt->user_data) {
+        struct response_buffer *res = (struct response_buffer *)evt->user_data;
+        if (res->idx + evt->data_len < res->size - 1) {
+          memcpy(res->buf + res->idx, evt->data, evt->data_len);
+          res->idx += evt->data_len;
+          res->buf[res->idx] = '\0';
+        }
+      }
+      break;
+    default:
+      break;
+  }
+  return ESP_OK;
+}
+
+void check_for_updates_via_http(void);
 
 // Forward Declarations
 static void websocket_event_handler(void *handler_args, esp_event_base_t base,
@@ -463,15 +490,78 @@ void send_device_health_to_supabase(void) {
     if (code >= 200 && code < 300) {
       ESP_LOGI(TAG_DB, "Heartbeat sent successfully (HTTP %d, SSID: %s)", code,
                current_ssid);
+      s_consecutive_heartbeat_failures = 0;
     } else {
       ESP_LOGE(TAG_DB, "Heartbeat failed with HTTP %d", code);
+      s_consecutive_heartbeat_failures++;
     }
   } else {
     ESP_LOGE(TAG_DB, "Heartbeat transport failed: %s", esp_err_to_name(err));
+    s_consecutive_heartbeat_failures++;
   }
   esp_http_client_cleanup(client);
   cJSON_Delete(root);
   free(json_string);
+
+  if (s_consecutive_heartbeat_failures >= 5) {
+    ESP_LOGW(TAG_DB, "Heartbeat failed 5 consecutive times while online. Reconnecting Wi-Fi to recover DNS/sockets...");
+    s_consecutive_heartbeat_failures = 0;
+    esp_wifi_disconnect();
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    esp_wifi_connect();
+  }
+}
+
+void check_for_updates_via_http(void) {
+  char url[256];
+  snprintf(url, sizeof(url), "%s/rest/v1/system_control?id=eq.1", SUPABASE_URL);
+
+  struct response_buffer res_buf;
+  char buffer[2048];
+  res_buf.buf = buffer;
+  res_buf.idx = 0;
+  res_buf.size = sizeof(buffer);
+  memset(buffer, 0, sizeof(buffer));
+
+  esp_http_client_config_t config = {
+      .url = url,
+      .method = HTTP_METHOD_GET,
+      .timeout_ms = 10000,
+      .event_handler = _http_event_handler,
+      .user_data = &res_buf,
+      .crt_bundle_attach = esp_crt_bundle_attach,
+  };
+  esp_http_client_handle_t client = esp_http_client_init(&config);
+  if (!client) {
+    ESP_LOGE(TAG_DB, "Failed to initialize HTTP client for update check");
+    return;
+  }
+  set_supabase_auth_headers(client);
+
+  esp_err_t err = esp_http_client_perform(client);
+  if (err == ESP_OK) {
+    int status = esp_http_client_get_status_code(client);
+    if (status >= 200 && status < 300) {
+      cJSON *root = cJSON_Parse(buffer);
+      if (root && cJSON_IsArray(root)) {
+        cJSON *row = cJSON_GetArrayItem(root, 0);
+        if (row) {
+          ESP_LOGI(TAG_DB, "HTTP update check: got system_control row");
+          ota_handle_system_control_record(row);
+        }
+      } else {
+        ESP_LOGE(TAG_DB, "HTTP update check: invalid response JSON or empty array");
+      }
+      if (root) {
+        cJSON_Delete(root);
+      }
+    } else {
+      ESP_LOGE(TAG_DB, "HTTP update check failed with HTTP status %d", status);
+    }
+  } else {
+    ESP_LOGE(TAG_DB, "HTTP update check perform failed: %s", esp_err_to_name(err));
+  }
+  esp_http_client_cleanup(client);
 }
 
 void supabase_sync_task(void *pvParameters) {
@@ -500,7 +590,10 @@ void supabase_sync_task(void *pvParameters) {
 
     // Device health heartbeat every 60s
     if (last_health == 0 || now - last_health >= 60000) {
-      send_device_health_to_supabase();
+      if (supabase_is_online()) {
+        send_device_health_to_supabase();
+        check_for_updates_via_http();
+      }
       last_health = now;
     }
 
