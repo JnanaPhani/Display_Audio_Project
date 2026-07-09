@@ -274,9 +274,8 @@ def main():
     parser.add_argument("--no-sign", action="store_true",
                         help="Skip signing (NOT recommended; signed devices will "
                              "reject the image). For debugging only.")
-    parser.add_argument("--device-type",
-                        help="Target device type (e.g. token_display, speaker). "
-                             "Defaults to DEVICE_TYPE env or auto-detect from project name.")
+    parser.add_argument("--device-type", default="token_display",
+                        help="Target device type (defaults to 'token_display').")
     args = parser.parse_args()
 
     load_env_file()
@@ -314,19 +313,7 @@ def main():
     print(f"Binary  : {src_bin}")
 
     # Device Type Resolution
-    device_type = args.device_type or get_cfg("DEVICE_TYPE")
-    if not device_type:
-        if project_name == "smart_token_display":
-            device_type = "token_display"
-        elif project_name == "audio_board":
-            device_type = "speaker"
-        else:
-            if "audio" in project_name or "speaker" in project_name:
-                device_type = "speaker"
-            elif "display" in project_name:
-                device_type = "token_display"
-            else:
-                device_type = "token_display" # default fallback
+    device_type = args.device_type
     print(f"Device Type: {device_type}")
 
     # Version
