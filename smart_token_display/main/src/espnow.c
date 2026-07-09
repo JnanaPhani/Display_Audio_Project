@@ -111,12 +111,19 @@ void espnow_send_scan(espnow_scan_msg_t *msg) {
 
     ESP_LOGI(TAG_NOW,
              "Offline: cycling channels 1..11 to reach receiver...");
+    
+    // Abort active background connection scan to unlock the channel
+    esp_wifi_disconnect();
+    vTaskDelay(pdMS_TO_TICKS(100)); // Allow time for disconnect state transition
+
     for (uint8_t ch = 1; ch <= 11; ch++) {
       esp_err_t err = esp_wifi_set_channel(ch, WIFI_SECOND_CHAN_NONE);
       if (err == ESP_OK) {
         vTaskDelay(pdMS_TO_TICKS(15)); // Wait for radio to lock
         esp_now_send(s_gateway_mac, (const uint8_t *)msg, sizeof(*msg));
         vTaskDelay(pdMS_TO_TICKS(10)); // Give radio time to transmit
+      } else {
+        ESP_LOGW(TAG_NOW, "Failed to set channel %d: %s", ch, esp_err_to_name(err));
       }
     }
 

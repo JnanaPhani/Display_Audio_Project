@@ -34,7 +34,7 @@ static void start_reconnect_timer(void) {
     } else {
         esp_timer_stop(s_reconnect_timer);
     }
-    esp_timer_start_once(s_reconnect_timer, 15000000); // 15 seconds
+    esp_timer_start_once(s_reconnect_timer, 30000000); // 30 seconds
 }
 
 /* This salt,verifier has been generated for username = "wifiprov" and password = "abcd1234"

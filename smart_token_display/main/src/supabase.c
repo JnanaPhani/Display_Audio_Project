@@ -527,6 +527,8 @@ void check_for_updates_via_http(void) {
       .url = url,
       .method = HTTP_METHOD_GET,
       .timeout_ms = 10000,
+      .buffer_size = SB_HTTP_BUFFER_SIZE,
+      .buffer_size_tx = SB_HTTP_TX_BUFFER_SIZE,
       .event_handler = _http_event_handler,
       .user_data = &res_buf,
       .crt_bundle_attach = esp_crt_bundle_attach,
