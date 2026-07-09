@@ -262,10 +262,5 @@ void mp3board_set_volume(uint8_t volume) {
 }
 
 void token_display_set_brightness(uint8_t percent) {
-  // Map brightness (1..100%) to announcer volume (0..30)
-  uint8_t vol = (percent * 30) / 100;
-  ESP_LOGI(TAG,
-           "Mapping Supabase brightness update %d%% to announcer volume %d",
-           percent, vol);
-  mp3board_set_volume(vol);
+  // No-op for audio board: brightness is not mapped to volume anymore.
 }

@@ -104,18 +104,6 @@ static void handle_device_status_record(cJSON *data_node) {
     xTaskCreate(reprovision_task, "reprov_task", 8192, NULL, 5, NULL);
   }
 
-  // 2. Check brightness adjustment
-  cJSON *bright = cJSON_GetObjectItem(data_node, "brightness");
-  if (bright && cJSON_IsNumber(bright)) {
-    int val = bright->valueint;
-    if (val >= 1 && val <= 100) {
-      ESP_LOGI(TAG_DB, "Realtime update: setting brightness to %d%%", val);
-      token_display_set_brightness((uint8_t)val);
-    } else {
-      ESP_LOGW(TAG_DB, "Realtime update: invalid brightness percent %d", val);
-    }
-  }
-
   // 3. Check name adjustment
   cJSON *name_item = cJSON_GetObjectItem(data_node, "name");
   if (name_item) {
@@ -156,15 +144,27 @@ static void handle_device_status_record(cJSON *data_node) {
     if (cJSON_IsNumber(vol_item)) {
       int val = vol_item->valueint;
       if (val >= 0 && val <= 100) {
-        ESP_LOGI(TAG_DB, "Realtime update: setting volume to %d%%", val);
-        uint8_t df_vol = (val * 30) / 100;
-        mp3board_set_volume(df_vol);
-
+        int32_t saved_volume = -1;
         nvs_handle_t handle;
-        if (nvs_open("storage", NVS_READWRITE, &handle) == ESP_OK) {
-          nvs_set_i32(handle, "device_volume", val);
-          nvs_commit(handle);
+        bool is_different = true;
+        if (nvs_open("storage", NVS_READONLY, &handle) == ESP_OK) {
+          if (nvs_get_i32(handle, "device_volume", &saved_volume) == ESP_OK) {
+            if (saved_volume == val) {
+              is_different = false;
+            }
+          }
           nvs_close(handle);
+        }
+        if (is_different) {
+          ESP_LOGI(TAG_DB, "Realtime update: setting volume to %d%%", val);
+          uint8_t df_vol = (val * 30) / 100;
+          mp3board_set_volume(df_vol);
+
+          if (nvs_open("storage", NVS_READWRITE, &handle) == ESP_OK) {
+            nvs_set_i32(handle, "device_volume", val);
+            nvs_commit(handle);
+            nvs_close(handle);
+          }
         }
       } else {
         ESP_LOGW(TAG_DB, "Realtime update: invalid volume percent %d", val);
