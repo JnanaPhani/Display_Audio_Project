@@ -92,7 +92,7 @@ grant select (
     device_id, last_seen, wifi_rssi, uptime_seconds, firmware_version,
     last_reboot_reason, device_timestamp, wifi_ssid,
     last_provisioned_at, reprovision_trigger, brownout_count, brightness,
-    device_type, volume
+    device_type, volume, name
 ) on public.device_status to anon;
 
 -- authenticated (e.g. your dashboard/service) keeps full access.

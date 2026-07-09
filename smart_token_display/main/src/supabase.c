@@ -108,8 +108,21 @@ static void handle_device_status_record(cJSON *data_node) {
   if (bright && cJSON_IsNumber(bright)) {
     int val = bright->valueint;
     if (val >= 1 && val <= 100) {
-      ESP_LOGI(TAG_DB, "Realtime update: setting brightness to %d%%", val);
-      token_display_set_brightness((uint8_t)val);
+      nvs_handle_t handle;
+      uint32_t saved_brightness = 75;
+      bool is_different = true;
+      if (nvs_open("storage", NVS_READONLY, &handle) == ESP_OK) {
+        if (nvs_get_u32(handle, "brightness", &saved_brightness) == ESP_OK) {
+          if (saved_brightness == val) {
+            is_different = false;
+          }
+        }
+        nvs_close(handle);
+      }
+      if (is_different) {
+        ESP_LOGI(TAG_DB, "Realtime update: setting brightness to %d%%", val);
+        token_display_set_brightness((uint8_t)val);
+      }
     } else {
       ESP_LOGW(TAG_DB, "Realtime update: invalid brightness percent %d", val);
     }
