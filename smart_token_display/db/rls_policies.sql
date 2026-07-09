@@ -91,7 +91,8 @@ grant insert, update on public.device_status to anon;
 grant select (
     device_id, last_seen, wifi_rssi, uptime_seconds, firmware_version,
     last_reboot_reason, device_timestamp, wifi_ssid,
-    last_provisioned_at, reprovision_trigger, brownout_count, brightness
+    last_provisioned_at, reprovision_trigger, brownout_count, brightness,
+    device_type, volume
 ) on public.device_status to anon;
 
 -- authenticated (e.g. your dashboard/service) keeps full access.

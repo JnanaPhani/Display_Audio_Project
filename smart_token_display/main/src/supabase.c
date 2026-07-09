@@ -114,6 +114,40 @@ static void handle_device_status_record(cJSON *data_node) {
       ESP_LOGW(TAG_DB, "Realtime update: invalid brightness percent %d", val);
     }
   }
+
+  // 3. Check name adjustment
+  cJSON *name_item = cJSON_GetObjectItem(data_node, "name");
+  if (name_item) {
+    if (cJSON_IsString(name_item)) {
+      nvs_handle_t handle;
+      char saved_name[64] = "";
+      size_t required_size = sizeof(saved_name);
+      bool is_different = true;
+      if (nvs_open("storage", NVS_READONLY, &handle) == ESP_OK) {
+        if (nvs_get_str(handle, "device_name", saved_name, &required_size) == ESP_OK) {
+          if (strcmp(saved_name, name_item->valuestring) == 0) {
+            is_different = false;
+          }
+        }
+        nvs_close(handle);
+      }
+      if (is_different) {
+        ESP_LOGI(TAG_DB, "Realtime update: saving name '%s' to NVS", name_item->valuestring);
+        if (nvs_open("storage", NVS_READWRITE, &handle) == ESP_OK) {
+          nvs_set_str(handle, "device_name", name_item->valuestring);
+          nvs_commit(handle);
+          nvs_close(handle);
+        }
+      }
+    } else if (cJSON_IsNull(name_item)) {
+      nvs_handle_t handle;
+      if (nvs_open("storage", NVS_READWRITE, &handle) == ESP_OK) {
+        nvs_erase_key(handle, "device_name");
+        nvs_commit(handle);
+        nvs_close(handle);
+      }
+    }
+  }
 }
 
 /**
@@ -342,15 +376,24 @@ void send_device_health_to_supabase(void) {
 
   // Provisioned timestamp from NVS (if any)
   int64_t last_prov_ts = 0;
+  char saved_name[64] = "";
+  size_t required_size = sizeof(saved_name);
   nvs_handle_t handle;
   if (nvs_open("storage", NVS_READONLY, &handle) == ESP_OK) {
     nvs_get_i64(handle, "prov_ts", &last_prov_ts);
+    nvs_get_str(handle, "device_name", saved_name, &required_size);
     nvs_close(handle);
   }
 
   cJSON *root = cJSON_CreateObject();
   cJSON_AddStringToObject(root, "device_id", mac_str);
   cJSON_AddStringToObject(root, "wifi_ssid", current_ssid);
+  cJSON_AddStringToObject(root, "device_type", DEVICE_TYPE);
+  if (saved_name[0]) {
+    cJSON_AddStringToObject(root, "name", saved_name);
+  } else {
+    cJSON_AddNullToObject(root, "name");
+  }
 
   wifi_ap_record_t ap;
   if (esp_wifi_sta_get_ap_info(&ap) == ESP_OK) {
@@ -364,6 +407,10 @@ void send_device_health_to_supabase(void) {
                           G_REBOOT_REASON_STR ? G_REBOOT_REASON_STR
                                               : "Unknown");
   cJSON_AddNumberToObject(root, "brownout_count", (double)G_BROWNOUT_COUNT);
+
+  time_t now;
+  time(&now);
+  cJSON_AddNumberToObject(root, "device_timestamp", (double)now);
 
   if (last_prov_ts > 0) {
     char prov_time_str[32];
@@ -455,6 +502,7 @@ void trigger_software_reprovision(void) {
   cJSON *root = cJSON_CreateObject();
   cJSON_AddStringToObject(root, "device_id", mac);
   cJSON_AddNumberToObject(root, "reprovision_trigger", 1);
+  cJSON_AddStringToObject(root, "device_type", DEVICE_TYPE);
   char *js = cJSON_PrintUnformatted(root);
 
   char url[256];

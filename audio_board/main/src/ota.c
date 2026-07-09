@@ -158,6 +158,21 @@ void ota_handle_system_control_record(cJSON *record) {
     cJSON *u_item = cJSON_GetObjectItem(record, "bin_url");
     if (!cJSON_IsString(v_item) || !cJSON_IsString(u_item)) return;
 
+    /* Device type targeting: if device_type is specified in the system_control row,
+     * it must match our DEVICE_TYPE. If it's missing/different, we ignore the update
+     * to prevent cross-flashing different firmwares on a shared database. */
+    cJSON *dt_item = cJSON_GetObjectItem(record, "device_type");
+    if (cJSON_IsString(dt_item) && dt_item->valuestring[0]) {
+        if (strcasecmp(dt_item->valuestring, DEVICE_TYPE) != 0) {
+            ESP_LOGI(TAG_OTA, "OTA targeted at device_type %s, not us (%s); skipping",
+                     dt_item->valuestring, DEVICE_TYPE);
+            return;
+        }
+    } else {
+        ESP_LOGW(TAG_OTA, "OTA system_control record has no device_type; skipping for safety");
+        return;
+    }
+
     if (strcmp(v_item->valuestring, FIRMWARE_VERSION) == 0) {
         return; // already on the target version
     }

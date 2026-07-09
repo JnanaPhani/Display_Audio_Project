@@ -20,6 +20,8 @@
 -- ----------------------------------------------------------------------------
 alter table public.system_control
     add column if not exists target_device_id text null;
+alter table public.system_control
+    add column if not exists device_type text null;
 
 
 -- ----------------------------------------------------------------------------

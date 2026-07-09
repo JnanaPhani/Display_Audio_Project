@@ -37,6 +37,11 @@
 #define ENABLE_OTA 1
 
 /**
+ * @brief Device type string used in Supabase logs and OTA updates.
+ */
+#define DEVICE_TYPE "speaker"
+
+/**
  * @brief Enable/disable ESP-NOW broadcast of scan events to the gateway ESP.
  *   1 = ESP-NOW enabled.
  *   0 = ESP-NOW disabled.

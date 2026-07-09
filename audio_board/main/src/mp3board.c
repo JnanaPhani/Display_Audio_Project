@@ -3,6 +3,8 @@
 #include "main.h"
 #include "ota_selftest.h"
 #include "token_display.h"
+#include "nvs.h"
+#include "nvs_flash.h"
 
 #include "driver/uart.h"
 #include "esp_log.h"
@@ -185,8 +187,22 @@ esp_err_t mp3board_init(void) {
     return err;
   }
 
-  // Set initial volume: 20 out of 30
-  dfplayer_set_volume(s_df, 20);
+  // Set initial volume: load from NVS if available, else default to 20
+  int32_t saved_volume = -1;
+  nvs_handle_t nvsh;
+  if (nvs_open("storage", NVS_READONLY, &nvsh) == ESP_OK) {
+    nvs_get_i32(nvsh, "device_volume", &saved_volume);
+    nvs_close(nvsh);
+  }
+
+  if (saved_volume >= 0 && saved_volume <= 100) {
+    uint8_t vol = (saved_volume * 30) / 100;
+    ESP_LOGI(TAG, "Setting initial volume from NVS: %d%% (DFPlayer: %d)", (int)saved_volume, vol);
+    dfplayer_set_volume(s_df, vol);
+  } else {
+    ESP_LOGI(TAG, "No valid volume in NVS, using default: 20/30");
+    dfplayer_set_volume(s_df, 20);
+  }
 
   // Create queue to buffer incoming ESP-NOW announcements
   s_play_queue = xQueueCreate(PLAYBACK_QUEUE_LEN, sizeof(int32_t));

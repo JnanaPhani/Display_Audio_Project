@@ -38,6 +38,11 @@
 #define ENABLE_OTA 1
 
 /**
+ * @brief Device type string used in Supabase logs and OTA updates.
+ */
+#define DEVICE_TYPE "token_display"
+
+/**
  * @brief Enable/disable ESP-NOW broadcast of scan events to the gateway ESP.
  *   1 = ESP-NOW enabled  (each accepted scan is also unicast to GATEWAY_MAC).
  *   0 = ESP-NOW disabled (espnow code compiled out as no-op stubs).
