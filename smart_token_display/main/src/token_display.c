@@ -600,13 +600,6 @@ static void handle_scan(const char *raw) {
     ESP_LOGI(TAG_TD, "ONLINE %s -> packing_complete", ev.token);
     event_send_or_queue(&ev);
     mirror_scan_to_gateway(&ev, &pb);
-    /* This is the "packed" moment for an online order: one scan, no
-     * ready/no-show toggle. Online tokens ARE real, scannable barcodes
-     * (BY-YYYYMMDD-TORD<n>, e.g. TORD1) — an earlier assumption that this
-     * format never reaches production was wrong (migration 089's own
-     * comments document the correction); scan_mark_order_packed() now
-     * accepts any alphanumeric token, so this call belongs here too. */
-    mark_order_packed(raw);
     return;
   }
 
@@ -634,15 +627,6 @@ static void handle_scan(const char *raw) {
       display_show_now(pb.display_num); /* show this number instantly */
       event_send_or_queue(&ev);
       mirror_scan_to_gateway(&ev, &pb);
-      /* This is the "packed" moment: first scan of a walk-in barcode means
-       * staff just physically packed the order. Not fired again on the
-       * second/no-show scan below (already packed by then — a repeat call
-       * would just be harmlessly rejected server-side, so there's no
-       * reason to make it). Synchronous, best-effort: no local retry/queue
-       * for this one call, unlike event_send_or_queue's NVS-backed queue
-       * above, since that queue exists for the physical display-board
-       * feature's own consistency needs, not this one. */
-      mark_order_packed(raw);
     } else {
       xSemaphoreGive(s_state_lock); /* active set full */
     }

@@ -403,24 +403,6 @@ esp_err_t post_token_event(const char *order_id, const char *token,
   return result;
 }
 
-esp_err_t mark_order_packed(const char *raw_barcode) {
-  if (!raw_barcode)
-    return ESP_FAIL;
-
-  cJSON *root = cJSON_CreateObject();
-  cJSON_AddStringToObject(root, "p_barcode", raw_barcode);
-  char *json_string = cJSON_PrintUnformatted(root);
-
-  esp_err_t result = supabase_post_rpc("scan_mark_order_packed", json_string);
-  if (result != ESP_OK) {
-    ESP_LOGE(TAG_DB, "mark_order_packed: RPC call failed for '%s'", raw_barcode);
-  }
-
-  cJSON_Delete(root);
-  free(json_string);
-  return result;
-}
-
 void send_device_health_to_supabase(void) {
   char mac_str[18];
   get_mac_address(mac_str);
