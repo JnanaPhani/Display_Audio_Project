@@ -89,6 +89,7 @@ typedef struct {
   char order_id[ORDERID_MAXLEN];
   int display_num; /* numeric token shown on P10 */
   bool is_local;   /* true if scanned locally on this board */
+  bool timed_out;  /* true if 5 minutes have elapsed without second scan */
 } active_token_t;
 
 /* A no-show'd offline token (permanently done for this session). */
@@ -325,6 +326,7 @@ static bool active_add(const char *order_id, int display_num, bool is_local) {
   s_active[s_active_count].order_id[ORDERID_MAXLEN - 1] = '\0';
   s_active[s_active_count].display_num = display_num;
   s_active[s_active_count].is_local = is_local;
+  s_active[s_active_count].timed_out = false;
   s_active_shown_time[s_active_count] = xTaskGetTickCount() * portTICK_PERIOD_MS;
   s_active_count++;
   return true;
@@ -688,13 +690,12 @@ static void display_task(void *arg) {
       xSemaphoreTake(s_state_lock, portMAX_DELAY);
       uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
       bool state_changed = false;
-      for (int i = 0; i < s_active_count; ) {
-        if (now - s_active_shown_time[i] >= 300000) { // 5 minutes
-          ESP_LOGI(TAG_TD, "Token %d expired after 5 minutes of showing; removing.", s_active[i].display_num);
-          active_remove_at(i);
+      for (int i = 0; i < s_active_count; i++) {
+        if (!s_active[i].timed_out && (now - s_active_shown_time[i] >= 300000)) { // 5 minutes
+          ESP_LOGI(TAG_TD, "Token %d (order_id: %s) expired after 5 minutes of showing; marking timed out.",
+                   s_active[i].display_num, s_active[i].order_id);
+          s_active[i].timed_out = true;
           state_changed = true;
-        } else {
-          i++;
         }
       }
       if (state_changed) {
@@ -702,7 +703,7 @@ static void display_task(void *arg) {
       }
 
       for (int i = 0; i < s_active_count; i++) {
-        if (s_active[i].is_local) {
+        if (s_active[i].is_local && !s_active[i].timed_out) {
           local_count++;
         }
       }
@@ -711,7 +712,7 @@ static void display_task(void *arg) {
         int found_idx = -1;
         for (int i = 0; i < s_active_count; i++) {
           int check_idx = (idx + i) % s_active_count;
-          if (s_active[check_idx].is_local) {
+          if (s_active[check_idx].is_local && !s_active[check_idx].timed_out) {
             found_idx = check_idx;
             break;
           }
