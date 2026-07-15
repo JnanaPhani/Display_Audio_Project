@@ -88,6 +88,7 @@ typedef struct {
 typedef struct {
   char order_id[ORDERID_MAXLEN];
   int display_num; /* numeric token shown on P10 */
+  bool is_local;   /* true if scanned locally on this board */
 } active_token_t;
 
 /* A no-show'd offline token (permanently done for this session). */
@@ -99,6 +100,7 @@ typedef struct {
 /* In-RAM local state (mirror of NVS), guarded by s_state_lock.        */
 /* ------------------------------------------------------------------ */
 static active_token_t s_active[ACTIVE_MAX];
+static uint32_t s_active_shown_time[ACTIVE_MAX];
 static int s_active_count;
 static done_token_t s_done[DONE_MAX];
 static int s_done_count;
@@ -257,6 +259,10 @@ static void state_load(void) {
   size_t len = sizeof(active_token_t) * ac;
   if (ac > 0 && nvs_get_blob(h, STATE_KEY_ACTIVE, s_active, &len) == ESP_OK) {
     s_active_count = (int)ac;
+    uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
+    for (int i = 0; i < s_active_count; i++) {
+      s_active_shown_time[i] = now;
+    }
   }
   len = sizeof(done_token_t) * dc;
   if (dc > 0 && nvs_get_blob(h, STATE_KEY_DONE, s_done, &len) == ESP_OK) {
@@ -301,7 +307,7 @@ static bool done_contains(const char *order_id) {
 
 static void done_add(const char *order_id); /* fwd decl: used by active_add() */
 
-static bool active_add(const char *order_id, int display_num) {
+static bool active_add(const char *order_id, int display_num, bool is_local) {
   /* Rolling last-N window: when full, evict the OLDEST entry (FIFO) to make
    * room for the new one. The evicted token is marked done so a later re-scan
    * is ignored rather than reappearing in the loop. */
@@ -311,11 +317,15 @@ static bool active_add(const char *order_id, int display_num) {
              s_active[0].order_id);
     memmove(&s_active[0], &s_active[1],
             sizeof(active_token_t) * (ACTIVE_MAX - 1));
+    memmove(&s_active_shown_time[0], &s_active_shown_time[1],
+            sizeof(uint32_t) * (ACTIVE_MAX - 1));
     s_active_count = ACTIVE_MAX - 1;
   }
   strncpy(s_active[s_active_count].order_id, order_id, ORDERID_MAXLEN - 1);
   s_active[s_active_count].order_id[ORDERID_MAXLEN - 1] = '\0';
   s_active[s_active_count].display_num = display_num;
+  s_active[s_active_count].is_local = is_local;
+  s_active_shown_time[s_active_count] = xTaskGetTickCount() * portTICK_PERIOD_MS;
   s_active_count++;
   return true;
 }
@@ -327,6 +337,8 @@ static void active_remove_at(int idx) {
    * cycles predictably. */
   memmove(&s_active[idx], &s_active[idx + 1],
           sizeof(active_token_t) * (s_active_count - idx - 1));
+  memmove(&s_active_shown_time[idx], &s_active_shown_time[idx + 1],
+          sizeof(uint32_t) * (s_active_count - idx - 1));
   s_active_count--;
 }
 
@@ -618,7 +630,7 @@ static void handle_scan(const char *raw) {
   int idx = active_find(raw);
   if (idx < 0) {
     /* FIRST scan: ready to collect -> show on display. */
-    if (active_add(raw, pb.display_num)) {
+    if (active_add(raw, pb.display_num, true)) {
       state_save();
       xSemaphoreGive(s_state_lock);
       strncpy(ev.status, "ready_to_collect", sizeof(ev.status) - 1);
@@ -671,22 +683,50 @@ static void display_task(void *arg) {
       p10_draw_number(prio);
     } else {
       int value = -1;
-      int count;
+      int local_count = 0;
 
       xSemaphoreTake(s_state_lock, portMAX_DELAY);
-      count = s_active_count;
-      if (count > 0) {
-        if (idx >= count)
-          idx = 0;
-        value = s_active[idx].display_num;
+      uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
+      bool state_changed = false;
+      for (int i = 0; i < s_active_count; ) {
+        if (now - s_active_shown_time[i] >= 300000) { // 5 minutes
+          ESP_LOGI(TAG_TD, "Token %d expired after 5 minutes of showing; removing.", s_active[i].display_num);
+          active_remove_at(i);
+          state_changed = true;
+        } else {
+          i++;
+        }
+      }
+      if (state_changed) {
+        state_save();
+      }
+
+      for (int i = 0; i < s_active_count; i++) {
+        if (s_active[i].is_local) {
+          local_count++;
+        }
+      }
+
+      if (local_count > 0) {
+        int found_idx = -1;
+        for (int i = 0; i < s_active_count; i++) {
+          int check_idx = (idx + i) % s_active_count;
+          if (s_active[check_idx].is_local) {
+            found_idx = check_idx;
+            break;
+          }
+        }
+        if (found_idx >= 0) {
+          value = s_active[found_idx].display_num;
+          idx = (found_idx + 1) % s_active_count;
+        }
       }
       xSemaphoreGive(s_state_lock);
 
-      if (count == 0) {
+      if (local_count == 0) {
         p10_clear();
       } else {
         p10_draw_number(value);
-        idx = (idx + 1) % count;
       }
     }
 
@@ -794,11 +834,10 @@ void token_display_sync_event(const char *raw, int display_num, int status) {
 
   if (status == ESPNOW_STATUS_READY_TO_COLLECT) {
     if (!done_contains(raw) && active_find(raw) < 0) {
-      if (active_add(raw, display_num)) {
+      if (active_add(raw, display_num, false)) {
         state_save();
         ESP_LOGI(TAG_TD, "Sync: added active token %d (remote scan)", display_num);
         xSemaphoreGive(s_state_lock);
-        display_show_now(display_num);
         return;
       }
     }

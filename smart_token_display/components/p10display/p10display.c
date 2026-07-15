@@ -14,6 +14,8 @@
 #include "driver/gpio.h"
 #include "esp_rom_sys.h"      /* esp_rom_delay_us */
 #include "soc/gpio_struct.h"  /* GPIO.out_w1ts / out_w1tc for fast bit-bang */
+#include "esp_attr.h"
+
 
 /* Fast single-cycle pin set/clear (all supported pins are GPIO < 32). Far
  * quicker than gpio_set_level(), which shrinks the unlit shift time -> brighter. */
@@ -324,7 +326,7 @@ static inline void shift_byte(const uint8_t *row_on, int col0)
  * column-byte. Latch ONCE (OE blanked), set address, then enable for an equal
  * time slice. 4 groups = one full 16-row frame.
  */
-static void p10_refresh_task(void *arg)
+static void IRAM_ATTR p10_refresh_task(void *arg)
 {
     (void)arg;
     while (1) {
@@ -404,7 +406,7 @@ void p10_init_config(const p10_config_t *cfg)
      * core's IDLE task is intentionally starved, so the matching
      * CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU<core> must be disabled. */
     xTaskCreatePinnedToCore(p10_refresh_task, "p10_refresh", 3072,
-                            NULL, 1, NULL, s_cfg.refresh_core);
+                            NULL, configMAX_PRIORITIES - 1, NULL, s_cfg.refresh_core);
 }
 
 void p10_init(void)
