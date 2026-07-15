@@ -109,6 +109,22 @@ esp_err_t post_token_event(const char *order_id, const char *token,
                            const char *event_date);
 
 /**
+ * @brief Mark a scanned order as packed via the scan_mark_order_packed RPC.
+ *
+ * All validation (barcode format, today's date, order lookup, current
+ * status) happens server-side inside the RPC — this is a thin pass-through
+ * of the raw scanned string, same trust model as post_token_event() (anon
+ * key, no user session). A rejected scan (bad format, not found, wrong
+ * status) is a normal outcome the RPC reports as {"ok": false, ...} inside
+ * a 2xx response, not a transport failure — there is nothing for the
+ * firmware to branch on here beyond network/HTTP success.
+ *
+ * @param raw_barcode Raw scanned barcode string (e.g. "BY-20260715-T42").
+ * @return ESP_OK on 2xx, ESP_FAIL on network/HTTP failure.
+ */
+esp_err_t mark_order_packed(const char *raw_barcode);
+
+/**
  * @brief POST a JSON body to a Supabase PostgREST RPC (/rest/v1/rpc/<name>).
  *
  * Shared helper used by the crash + OTA status reporters. Sends with the
