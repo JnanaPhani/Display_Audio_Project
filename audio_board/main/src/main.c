@@ -12,6 +12,8 @@
 #include "esp_wifi.h"
 #include "esp_crt_bundle.h"
 
+extern void esp_brownout_disable(void);
+
 #define TAG "Main"
 struct timeval tv;
 const char* G_REBOOT_REASON_STR = "Unknown";
@@ -98,6 +100,9 @@ static void network_task(void *pvParameters)
 
 void app_main(void)
 {
+    // Explicitly disable the hardware brownout detector before performing high-power operations
+    esp_brownout_disable();
+
     esp_reset_reason_t reboot_reason = esp_reset_reason();
     G_REBOOT_REASON_STR = get_reboot_reason_string(reboot_reason);
     ESP_LOGI(TAG, "Last reboot reason: %s", G_REBOOT_REASON_STR);

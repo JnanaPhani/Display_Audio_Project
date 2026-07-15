@@ -54,3 +54,16 @@ CONFIG_SECURE_SIGNED_APPS_RSA_SCHEME=y
 CONFIG_SECURE_SIGNED_ON_UPDATE_NO_SECURE_BOOT=y
 # CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES is not set
 # CONFIG_SECURE_BOOT is not set
+
+# --- Power & RF stability optimizations ---
+# 1. Disable the brownout detector entirely for testing/running through transients.
+CONFIG_ESP_BROWNOUT_DET=n
+CONFIG_BROWNOUT_DET=n
+CONFIG_ESP32S3_BROWNOUT_DET=n
+
+# 2. Lower maximum Wi-Fi TX power from 20dBm to 15dBm to reduce the peak current spike.
+CONFIG_ESP_PHY_MAX_WIFI_TX_POWER=15
+CONFIG_ESP_PHY_MAX_TX_POWER=15
+
+# 3. Enable auto-reduction of TX power if voltage drops.
+CONFIG_ESP_PHY_REDUCE_TX_POWER=y

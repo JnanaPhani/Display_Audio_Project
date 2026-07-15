@@ -27,6 +27,7 @@
 static bool     s_ready = false;
 static uint32_t s_seq   = 0;
 static uint8_t  s_gateway_mac[6];
+static const uint8_t s_broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 /** @brief Parse "AA:BB:CC:DD:EE:FF" into out[6]; broadcast fallback on failure. */
 static void parse_gateway_mac(uint8_t out[6]) {
@@ -114,6 +115,13 @@ static void on_recv(const esp_now_recv_info_t *recv_info, const uint8_t *data, i
             ESP_LOGW(TAG_NOW, "Skipping non-numeric online token: %s", msg->token);
         }
     }
+    // Relay the scan event to all displays via ESP-NOW broadcast so their active lists stay in sync
+    esp_err_t relay_err = esp_now_send(s_broadcast_mac, (const uint8_t *)msg, sizeof(espnow_scan_msg_t));
+    if (relay_err != ESP_OK) {
+        ESP_LOGW(TAG_NOW, "Failed to relay scan message via broadcast: %s", esp_err_to_name(relay_err));
+    } else {
+        ESP_LOGD(TAG_NOW, "Relayed scan event via broadcast to sync other counters");
+    }
 }
 
 esp_err_t espnow_init(void) {
@@ -150,6 +158,18 @@ esp_err_t espnow_init(void) {
         }
     } else {
         ESP_LOGI(TAG_NOW, "This device is the gateway; skipped adding gateway peer to itself");
+    }
+
+    // Add broadcast peer so we can relay scans to all displays
+    esp_now_peer_info_t bpeer = {0};
+    memcpy(bpeer.peer_addr, s_broadcast_mac, 6);
+    bpeer.channel = 0;
+    bpeer.ifidx   = WIFI_IF_STA;
+    bpeer.encrypt = false;
+    err = esp_now_add_peer(&bpeer);
+    if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST) {
+        ESP_LOGE(TAG_NOW, "Failed to add broadcast peer: %s", esp_err_to_name(err));
+        return err;
     }
 
     s_ready = true;
