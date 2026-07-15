@@ -784,3 +784,35 @@ void token_display_set_brightness(uint8_t percent) {
     nvs_close(h);
   }
 }
+
+void token_display_sync_event(const char *raw, int display_num, int status) {
+  if (s_state_lock == NULL) {
+    return;
+  }
+
+  xSemaphoreTake(s_state_lock, portMAX_DELAY);
+
+  if (status == ESPNOW_STATUS_READY_TO_COLLECT) {
+    if (!done_contains(raw) && active_find(raw) < 0) {
+      if (active_add(raw, display_num)) {
+        state_save();
+        ESP_LOGI(TAG_TD, "Sync: added active token %d (remote scan)", display_num);
+        xSemaphoreGive(s_state_lock);
+        display_show_now(display_num);
+        return;
+      }
+    }
+  } else if (status == ESPNOW_STATUS_NO_SHOW) {
+    int idx = active_find(raw);
+    if (idx >= 0) {
+      active_remove_at(idx);
+    }
+    if (!done_contains(raw)) {
+      done_add(raw);
+    }
+    state_save();
+    ESP_LOGI(TAG_TD, "Sync: removed active token %d (remote no_show)", display_num);
+  }
+
+  xSemaphoreGive(s_state_lock);
+}

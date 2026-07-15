@@ -47,4 +47,14 @@ void token_display_start(void);
  */
 void token_display_set_brightness(uint8_t percent);
 
+/**
+ * @brief Sync a remote token scan event (received via ESP-NOW broadcast) into
+ *        the local active/done display lists.
+ *
+ * @param order_id    The raw scanned barcode string.
+ * @param display_num The parsed numeric token.
+ * @param status      The status (ESPNOW_STATUS_READY_TO_COLLECT or ESPNOW_STATUS_NO_SHOW).
+ */
+void token_display_sync_event(const char *order_id, int display_num, int status);
+
 #endif /* __TOKEN_DISPLAY_H__ */

@@ -514,7 +514,7 @@ void send_device_health_to_supabase(void) {
 
 void check_for_updates_via_http(void) {
   char url[256];
-  snprintf(url, sizeof(url), "%s/rest/v1/system_control?id=eq.1", SUPABASE_URL);
+  snprintf(url, sizeof(url), "%s/rest/v1/system_control?device_type=eq.token_display", SUPABASE_URL);
 
   struct response_buffer res_buf;
   char buffer[2048];

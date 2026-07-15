@@ -1,0 +1,648 @@
+Device 1 logs:- 
+
+zenithtek@zenithtek-HP-Pavilion-Laptop-14-dv2xxx:~/Display_Audio_Project/smart_token_display$ idf.py -p /dev/ttyUSB0 monitor
+Executing action: monitor
+Running idf_monitor in directory /home/zenithtek/Display_Audio_Project/smart_token_display
+Executing "/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python /home/zenithtek/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyUSB0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/zenithtek/Display_Audio_Project/smart_token_display/build/smart_token_display.elf -m '/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python' '/home/zenithtek/esp/esp-idf/tools/idf.py' '-p' '/dev/ttyUSB0'"...
+--- esp-idf-monitor 1.6.0 on /dev/ttyUSB0 115200
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+I (00:13:00.962) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:13:00.963) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (786008) wifi:Haven't to connect to a suitable AP now!
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f74
+entry 0x403c8928
+I (27) boot: ESP-IDF v5.4.1-dirty 2nd stage bootloader
+I (27) boot: compile time Jul  8 2026 17:44:56
+I (27) boot: Multicore bootloader
+I (28) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.3
+I (34) boot.esp32s3: Boot SPI Speed : 80MHz
+I (38) boot.esp32s3: SPI Mode       : DIO
+I (42) boot.esp32s3: SPI Flash Size : 4MB
+I (45) boot: Enabling RNG early entropy source...
+I (50) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (72) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 coredump         Unknown data     01 03 00012000 00010000
+I (85) boot:  4 ota_0            OTA app          00 10 00030000 00190000
+I (91) boot:  5 ota_1            OTA app          00 11 001c0000 00190000
+I (98) boot: End of partition table
+I (101) esp_image: segment 0: paddr=00030020 vaddr=3c0d0020 size=43a78h (277112) map
+I (157) esp_image: segment 1: paddr=00073aa0 vaddr=3fc9a300 size=050f4h ( 20724) load
+I (162) esp_image: segment 2: paddr=00078b9c vaddr=40374000 size=0747ch ( 29820) load
+I (169) esp_image: segment 3: paddr=00080020 vaddr=42000020 size=cc250h (836176) map
+I (316) esp_image: segment 4: paddr=0014c278 vaddr=4037b47c size=0edd8h ( 60888) load
+I (330) esp_image: segment 5: paddr=0015b058 vaddr=600fe100 size=0001ch (    28) load
+I (330) esp_image: segment 6: paddr=0015b07c vaddr=00000000 size=04f54h ( 20308) 
+I (346) boot: Loaded app from partition at offset 0x30000
+I (346) boot: Disabling RNG early entropy source...
+I (356) cpu_start: Multicore app
+I (365) cpu_start: Pro cpu start user code
+I (365) cpu_start: cpu freq: 160000000 Hz
+I (365) app_init: Application information:
+I (365) app_init: Project name:     smart_token_display
+I (370) app_init: App version:      a8f5798
+I (374) app_init: Compile time:     Jul  9 2026 13:25:55
+I (379) app_init: ELF file SHA256:  5d119b319...
+I (383) app_init: ESP-IDF:          v5.4.1-dirty
+I (388) efuse_init: Min chip rev:     v0.0
+I (392) efuse_init: Max chip rev:     v0.99 
+I (396) efuse_init: Chip rev:         v0.2
+I (400) heap_init: Initializing. RAM available for dynamic allocation:
+I (406) heap_init: At 3FCA6628 len 000430E8 (268 KiB): RAM
+I (411) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (416) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (421) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (428) spi_flash: detected chip: gd
+I (430) spi_flash: flash io: dio
+I (435) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (439) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (446) esp_core_dump_flash: Init core dump to flash
+I (450) esp_core_dump_flash: Found partition 'coredump' @ 12000 65536 bytes
+E (457) esp_core_dump_flash: Incorrect size of core dump image: 1145654337
+I (00:00:00.099) main_task: Started on CPU0
+I (00:00:00.120) main_task: Calling app_main()
+I (00:00:00.120) Main: Last reboot reason: Power On
+W (00:00:00.162) DEBUG: =============================================
+W (00:00:00.162) DEBUG: SMART TOKEN DISPLAY (OTA & Realtime Enabled) (a8f5798)
+W (00:00:00.164) DEBUG: =============================================
+I (00:00:00.170) Main: ========== Chip Information ===========================================
+I (00:00:00.179) Main: Chip model: ESP32-S3
+I (00:00:00.183) Main: CPU cores: 2
+I (00:00:00.186) Main: Silicon revision: 2
+I (00:00:00.190) Main: Flash size: 4 MB
+I (00:00:00.193) Main: ========== Program Version ============================================
+I (00:00:00.202) Main: [APP] Name: smart_token_display
+I (00:00:00.206) Main: [APP] Version: a8f5798
+I (00:00:00.210) Main: [APP] Compile Date: Jul  9 2026
+I (00:00:00.215) Main: [APP] Compile Time: 13:25:55
+I (00:00:00.220) Main: ========== Heap Information ===========================================
+I (00:00:00.228) Main: Total free heap: 313204 bytes
+I (00:00:00.233) Main: Minimum free heap since boot: 312324 bytes
+I (00:00:00.239) Main: Internal RAM free: 313204 bytes
+I (00:00:00.244) Main: ========== Stack Information ==========================================
+I (00:00:00.252) Main: Current task stack high water mark: 1912 bytes
+I (00:00:00.258) Main: ========== Flash Partition Information ================================
+I (00:00:00.267) Main: App partition size: 1638400 bytes
+I (00:00:00.272) Main: =======================================================================
+I (00:00:00.283) token_display: state loaded: 4 active, 2 done
+I (00:00:00.286) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.295) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.304) gpio: GPIO[12]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.313) gpio: GPIO[13]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.322) gpio: GPIO[18]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.331) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.364) token_display: USB Host library installed
+I (00:00:00.365) barcode_scanner: Initialized (terminator=0x0D, max_len=128)
+I (00:00:00.366) token_display: token_display started (3 events pending upload)
+I (00:00:00.375) pp: pp rom version: e7ae62f
+I (00:00:00.377) net80211: net80211 rom version: e7ae62f
+I (00:00:00.382) main_task: Returned from app_main()
+I (1028) wifi:wifi driver task: 3fcbdcf0, prio:23, stack:6656, core=0
+I (1048) wifi:wifi firmware version: 79fa3f41ba
+I (1048) wifi:wifi certification version: v7.0
+I (1048) wifi:config NVS flash: enabled
+I (1048) wifi:config nano formatting: disabled
+I (1058) wifi:Init data frame dynamic rx buffer num: 32
+I (1058) wifi:Init static rx mgmt buffer num: 5
+I (1068) wifi:Init management short buffer num: 32
+I (1068) wifi:Init dynamic tx buffer num: 32
+I (1078) wifi:Init static tx FG buffer num: 2
+I (1078) wifi:Init static rx buffer size: 1600
+I (1078) wifi:Init static rx buffer num: 10
+I (1088) wifi:Init dynamic rx buffer num: 32
+I (00:00:00.453) wifi_init: rx ba win: 6
+I (00:00:00.455) wifi_init: accept mbox: 6
+I (00:00:00.459) wifi_init: tcpip mbox: 32
+I (00:00:00.463) wifi_init: udp mbox: 6
+I (00:00:00.467) wifi_init: tcp mbox: 6
+I (00:00:00.470) wifi_init: tcp tx win: 5760
+I (00:00:00.474) wifi_init: tcp rx win: 5760
+I (00:00:00.478) wifi_init: tcp mss: 1440
+I (00:00:00.482) wifi_init: WiFi IRAM OP enabled
+I (00:00:00.486) wifi_init: WiFi RX IRAM OP enabled
+I (00:00:00.491) WIFI_MANAGER: Already provisioned, starting Wi-Fi STA
+I (00:00:00.498) phy_init: phy_version 700,8582a7fd,Feb 10 2025,20:13:11
+I (1178) wifi:mode : sta (3c:dc:75:4c:bd:90)
+I (1178) wifi:enable tsf
+I (1178) ESPNOW: espnow [version: 2.0] init
+I (00:00:00.540) ESPNOW: ready: gateway=3C:DC:75:4C:BD:C8 channel=1
+W (1178) wifi:STA is scanning or connecting, or AP has connected with external STAs, cannot set channel
+
+W (00:00:00.552) ESPNOW: repin channel 1 failed: ESP_FAIL
+E (00:00:00.734) HUB: Failed to issue root port reset
+I (00:00:01.116) barcode_scanner: HID device connected (proto=1)
+I (00:00:02.951) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:00:02.952) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (6008) wifi:Haven't to connect to a suitable AP now!
+E (00:00:06.114) hid-host: hid_control_transfer(956): Control transfer timeout
+E (00:00:06.115) hid-host: hid_control_transfer(950): Unable to submit control transfer
+W (11008) wifi:Haven't to connect to a suitable AP now!
+W (16008) wifi:Haven't to connect to a suitable AP now!
+W (21008) wifi:Haven't to connect to a suitable AP now!
+W (26008) wifi:Haven't to connect to a suitable AP now!
+W (31008) wifi:Haven't to connect to a suitable AP now!
+I (00:00:32.953) Provisioning: Timer triggered: attempting to reconnect to AP...
+I (00:00:35.365) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:00:35.366) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (36008) wifi:Haven't to connect to a suitable AP now!
+I (00:00:38.509) barcode_scanner: Scanned (6): 345579
+I (00:00:38.510) token_display: Scan: '345579'
+W (00:00:38.510) token_display: relaxed: '345579' -> offline token 5579
+I (00:00:38.538) token_display: offline 5579 1st scan -> ready_to_collect (shown)
+W (39178) wifi:Haven't to connect to a suitable AP now!
+W (00:00:38.544) token_display: queued event 345579/ready_to_collect (pending=4)
+W (39188) wifi:Haven't to connect to a suitable AP now!
+I (00:00:38.551) ESPNOW: Offline: cycling channels 1..11 to reach receiver...
+I (00:00:38.875) ESPNOW: Scan broadcast complete, restored to channel 1
+W (41008) wifi:Haven't to connect to a suitable AP now!
+W (46008) wifi:Haven't to connect to a suitable AP now!
+W (51008) wifi:Haven't to connect to a suitable AP now!
+W (56008) wifi:Haven't to connect to a suitable AP now!
+W (61008) wifi:Haven't to connect to a suitable AP now!
+W (66008) wifi:Haven't to connect to a suitable AP now!
+I (00:01:05.367) Provisioning: Timer triggered: attempting to reconnect to AP...
+I (00:01:07.779) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:01:07.780) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (71008) wifi:Haven't to connect to a suitable AP now!
+W (76008) wifi:Haven't to connect to a suitable AP now!
+W (81008) wifi:Haven't to connect to a suitable AP now!
+W (86008) wifi:Haven't to connect to a suitable AP now!
+W (91008) wifi:Haven't to connect to a suitable AP now!
+W (96008) wifi:Haven't to connect to a suitable AP now!
+I (00:01:37.781) Provisioning: Timer triggered: attempting to reconnect to AP...
+I (00:01:40.193) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:01:40.195) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (101008) wifi:Haven't to connect to a suitable AP now!
+W (106008) wifi:Haven't to connect to a suitable AP now!
+W (111008) wifi:Haven't to connect to a suitable AP now!
+W (116008) wifi:Haven't to connect to a suitable AP now!
+W (121008) wifi:Haven't to connect to a suitable AP now!
+W (126008) wifi:Haven't to connect to a suitable AP now!
+I (00:02:10.196) Provisioning: Timer triggered: attempting to reconnect to AP...
+W (131008) wifi:Haven't to connect to a suitable AP now!
+I (00:02:12.607) Provisioning: Disconnected. Scheduling reconnect attempt...
+I (00:02:12.609) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (136008) wifi:Haven't to connect to a suitable AP now!
+W (141008) wifi:Haven't to connect to a suitable AP now!
+W (146008) wifi:Haven't to connect to a suitable AP now!
+W (151008) wifi:Haven't to connect to a suitable AP now!
+W (156008) wifi:Haven't to connect to a suitable AP now!
+W (161008) wifi:Haven't to connect to a suitable AP now!
+ (00:02:42.610) Provisioning: Timer triggered: attempting to reconnect to AP...
+--- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect...............................................................................................................
+
+
+
+Device 2 Logs: 
+
+zenithtek@zenithtek-HP-Pavilion-Laptop-14-dv2xxx:~/Display_Audio_Project/smart_token_display$ idf.py -p /dev/ttyUSB0 monitor
+Executing action: monitor
+Running idf_monitor in directory /home/zenithtek/Display_Audio_Project/smart_token_display
+Executing "/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python /home/zenithtek/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyUSB0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/zenithtek/Display_Audio_Project/smart_token_display/build/smart_token_display.elf -m '/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python' '/home/zenithtek/esp/esp-idf/tools/idf.py' '-p' '/dev/ttyUSB0'"...
+--- esp-idf-monitor 1.6.0 on /dev/ttyUSB0 115200
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+W (950941) wifi:Haven't to connect to a suitable AP now!
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f74
+entry 0x403c8928
+I (27) boot: ESP-IDF v5.4.1-dirty 2nd stage bootloader
+I (27) boot: compile time Jul  8 2026 17:44:56
+I (27) boot: Multicore bootloader
+I (28) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.3
+I (34) boot.esp32s3: Boot SPI Speed : 80MHz
+I (38) boot.esp32s3: SPI Mode       : DIO
+I (42) boot.esp32s3: SPI Flash Size : 4MB
+I (45) boot: Enabling RNG early entropy source...
+I (50) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (72) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 coredump         Unknown data     01 03 00012000 00010000
+I (85) boot:  4 ota_0            OTA app          00 10 00030000 00190000
+I (91) boot:  5 ota_1            OTA app          00 11 001c0000 00190000
+I (98) boot: End of partition table
+I (101) esp_image: segment 0: paddr=00030020 vaddr=3c0d0020 size=43a78h (277112) map
+I (157) esp_image: segment 1: paddr=00073aa0 vaddr=3fc9a300 size=050f4h ( 20724) load
+I (162) esp_image: segment 2: paddr=00078b9c vaddr=40374000 size=0747ch ( 29820) load
+I (169) esp_image: segment 3: paddr=00080020 vaddr=42000020 size=cc250h (836176) map
+I (316) esp_image: segment 4: paddr=0014c278 vaddr=4037b47c size=0edd8h ( 60888) load
+I (330) esp_image: segment 5: paddr=0015b058 vaddr=600fe100 size=0001ch (    28) load
+I (330) esp_image: segment 6: paddr=0015b07c vaddr=00000000 size=04f54h ( 20308) 
+I (346) boot: Loaded app from partition at offset 0x30000
+I (346) boot: Disabling RNG early entropy source...
+I (356) cpu_start: Multicore app
+I (365) cpu_start: Pro cpu start user code
+I (365) cpu_start: cpu freq: 160000000 Hz
+I (365) app_init: Application information:
+I (365) app_init: Project name:     smart_token_display
+I (370) app_init: App version:      a8f5798
+I (374) app_init: Compile time:     Jul  9 2026 13:25:55
+I (379) app_init: ELF file SHA256:  5d119b319...
+I (383) app_init: ESP-IDF:          v5.4.1-dirty
+I (388) efuse_init: Min chip rev:     v0.0
+I (392) efuse_init: Max chip rev:     v0.99 
+I (396) efuse_init: Chip rev:         v0.2
+I (400) heap_init: Initializing. RAM available for dynamic allocation:
+I (406) heap_init: At 3FCA6628 len 000430E8 (268 KiB): RAM
+I (411) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (416) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (421) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (428) spi_flash: detected chip: gd
+I (430) spi_flash: flash io: dio
+I (435) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (439) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (446) esp_core_dump_flash: Init core dump to flash
+I (450) esp_core_dump_flash: Found partition 'coredump' @ 12000 65536 bytes
+I (00:00:00.093) main_task: Started on CPU0
+I (00:00:00.113) main_task: Calling app_main()
+I (00:00:00.113) Main: Last reboot reason: Power On
+W (00:00:00.124) DEBUG: =============================================
+W (00:00:00.125) DEBUG: SMART TOKEN DISPLAY (OTA & Realtime Enabled) (a8f5798)
+W (00:00:00.127) DEBUG: =============================================
+I (00:00:00.133) Main: ========== Chip Information ===========================================
+I (00:00:00.141) Main: Chip model: ESP32-S3
+I (00:00:00.145) Main: CPU cores: 2
+I (00:00:00.148) Main: Silicon revision: 2
+I (00:00:00.152) Main: Flash size: 4 MB
+I (00:00:00.156) Main: ========== Program Version ============================================
+I (00:00:00.164) Main: [APP] Name: smart_token_display
+I (00:00:00.169) Main: [APP] Version: a8f5798
+I (00:00:00.173) Main: [APP] Compile Date: Jul  9 2026
+I (00:00:00.178) Main: [APP] Compile Time: 13:25:55
+I (00:00:00.183) Main: ========== Heap Information ===========================================
+I (00:00:00.191) Main: Total free heap: 313796 bytes
+I (00:00:00.196) Main: Minimum free heap since boot: 313408 bytes
+I (00:00:00.201) Main: Internal RAM free: 313796 bytes
+I (00:00:00.206) Main: ========== Stack Information ==========================================
+I (00:00:00.215) Main: Current task stack high water mark: 1912 bytes
+I (00:00:00.221) Main: ========== Flash Partition Information ================================
+I (00:00:00.229) Main: App partition size: 1638400 bytes
+I (00:00:00.234) Main: =======================================================================
+I (00:00:00.243) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.252) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.261) gpio: GPIO[12]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.270) gpio: GPIO[13]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.279) gpio: GPIO[18]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.288) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.328) token_display: USB Host library installed
+I (00:00:00.329) barcode_scanner: Initialized (terminator=0x0D, max_len=128)
+I (00:00:00.330) token_display: token_display started (0 events pending upload)
+I (00:00:00.338) pp: pp rom version: e7ae62f
+I (00:00:00.341) net80211: net80211 rom version: e7ae62f
+I (00:00:00.346) main_task: Returned from app_main()
+I (961) wifi:wifi driver task: 3fcbdaa8, prio:23, stack:6656, core=0
+I (971) wifi:wifi firmware version: 79fa3f41ba
+I (971) wifi:wifi certification version: v7.0
+I (971) wifi:config NVS flash: enabled
+I (981) wifi:config nano formatting: disabled
+I (981) wifi:Init data frame dynamic rx buffer num: 32
+I (981) wifi:Init static rx mgmt buffer num: 5
+I (991) wifi:Init management short buffer num: 32
+I (991) wifi:Init dynamic tx buffer num: 32
+I (1001) wifi:Init static tx FG buffer num: 2
+I (1001) wifi:Init static rx buffer size: 1600
+I (1001) wifi:Init static rx buffer num: 10
+I (1011) wifi:Init dynamic rx buffer num: 32
+I (00:00:00.406) wifi_init: rx ba win: 6
+I (00:00:00.409) wifi_init: accept mbox: 6
+I (00:00:00.413) wifi_init: tcpip mbox: 32
+I (00:00:00.417) wifi_init: udp mbox: 6
+I (00:00:00.420) wifi_init: tcp mbox: 6
+I (00:00:00.424) wifi_init: tcp tx win: 5760
+I (00:00:00.428) wifi_init: tcp rx win: 5760
+I (00:00:00.432) wifi_init: tcp mss: 1440
+I (00:00:00.435) wifi_init: WiFi IRAM OP enabled
+I (00:00:00.440) wifi_init: WiFi RX IRAM OP enabled
+I (00:00:00.445) Provisioning: Starting provisioning
+I (00:00:00.449) Provisioning: Development mode: using hard coded salt
+I (00:00:00.455) Provisioning: Development mode: using hard coded verifier
+I (00:00:00.463) phy_init: phy_version 700,8582a7fd,Feb 10 2025,20:13:11
+I (1111) wifi:mode : sta (3c:dc:75:50:47:00)
+I (1111) wifi:enable tsf
+I (1121) wifi:mode : sta (3c:dc:75:50:47:00) + softAP (3c:dc:75:50:47:01)
+I (1121) wifi:Total power save buffer number: 16
+I (1121) wifi:Init max length of beacon: 752/752
+I (1121) wifi:Init max length of beacon: 752/752
+I (00:00:00.521) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (1131) wifi:Total power save buffer number: 16
+I (00:00:00.535) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (00:00:00.542) wifi_prov_mgr: Provisioning started with service name : ZT_TOKEN_DISPLAY_3CDC75504700 
+I (00:00:00.550) Provisioning: Provisioning started
+I (00:00:00.551) Provisioning: If QR code is not visible, copy paste the below URL in a browser.
+https://espressif.github.io/esp-jumpstart/qrcode.html?data={"ver":"v1","name":"ZT_TOKEN_DISPLAY_3CDC75504700","username":"wifiprov","pop":"abcd1234","transport":"softap"}
+I (1191) ESPNOW: espnow [version: 2.0] init
+I (00:00:00.582) ESPNOW: ready: gateway=3C:DC:75:4C:BD:C8 channel=1
+I (00:00:00.589) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (5941) wifi:Haven't to connect to a suitable AP now!
+W (10941) wifi:Haven't to connect to a suitable AP now!
+W (15941) wifi:Haven't to connect to a suitable AP now!
+W (20941) wifi:Haven't to connect to a suitable AP now!
+E (00:00:20.668) HUB: Root port reset failed
+E (00:00:20.978) HUB: Root port reset failed
+E (00:00:21.288) HUB: Root port reset failed
+E (00:00:21.598) HUB: Root port reset failed
+E (00:00:21.908) HUB: Root port reset failed
+E (00:00:22.218) HUB: Root port reset failed
+E (00:00:22.528) HUB: Root port reset failed
+E (00:00:22.838) HUB: Root port reset failed
+E (00:00:23.148) HUB: Root port reset failed
+E (00:00:23.458) HUB: Root port reset failed
+E (00:00:23.768) HUB: Root port reset failed
+E (00:00:24.078) HUB: Root port reset failed
+W (25941) wifi:Haven't to connect to a suitable AP now!
+W (30941) wifi:Haven't to connect to a suitable AP now!
+W (35941) wifi:Haven't to connect to a suitable AP now!
+W (40941) wifi:Haven't to connect to a suitable AP now!
+
+
+Device 3 Logs:
+
+zenithtek@zenithtek-HP-Pavilion-Laptop-14-dv2xxx:~/Display_Audio_Project/smart_token_display$ idf.py -p /dev/ttyUSB0 monitor
+Executing action: monitor
+Running idf_monitor in directory /home/zenithtek/Display_Audio_Project/smart_token_display
+Executing "/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python /home/zenithtek/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyUSB0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/zenithtek/Display_Audio_Project/smart_token_display/build/smart_token_display.elf -m '/home/zenithtek/.espressif/python_env/idf5.4_py3.12_env/bin/python' '/home/zenithtek/esp/esp-idf/tools/idf.py' '-p' '/dev/ttyUSB0'"...
+--- esp-idf-monitor 1.6.0 on /dev/ttyUSB0 115200
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2f74
+entry 0x403c8928
+I (27) boot: ESP-IDF v5.4.1-dirty 2nd stage bootloader
+I (27) boot: compile time Jul  8 2026 17:44:56
+I (27) boot: Multicore bootloader
+I (28) boot: chip revision: v0.2
+I (30) boot: efuse block revision: v1.3
+I (34) boot.esp32s3: Boot SPI Speed : 80MHz
+I (38) boot.esp32s3: SPI Mode       : DIO
+I (42) boot.esp32s3: SPI Flash Size : 4MB
+I (45) boot: Enabling RNG early entropy source...
+I (50) boot: Partition Table:
+I (52) boot: ## Label            Usage          Type ST Offset   Length
+I (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (65) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+I (72) boot:  2 phy_init         RF data          01 01 00011000 00001000
+I (78) boot:  3 coredump         Unknown data     01 03 00012000 00010000
+I (85) boot:  4 ota_0            OTA app          00 10 00030000 00190000
+I (91) boot:  5 ota_1            OTA app          00 11 001c0000 00190000
+I (98) boot: End of partition table
+I (101) boot: No factory image, trying OTA 0
+I (105) esp_image: segment 0: paddr=00030020 vaddr=3c0d0020 size=43a78h (277112) map
+I (161) esp_image: segment 1: paddr=00073aa0 vaddr=3fc9a300 size=050f4h ( 20724) load
+I (166) esp_image: segment 2: paddr=00078b9c vaddr=40374000 size=0747ch ( 29820) load
+I (173) esp_image: segment 3: paddr=00080020 vaddr=42000020 size=cc250h (836176) map
+I (320) esp_image: segment 4: paddr=0014c278 vaddr=4037b47c size=0edd8h ( 60888) load
+I (334) esp_image: segment 5: paddr=0015b058 vaddr=600fe100 size=0001ch (    28) load
+I (334) esp_image: segment 6: paddr=0015b07c vaddr=00000000 size=04f54h ( 20308) 
+I (350) boot: Loaded app from partition at offset 0x30000
+I (376) boot: Set actual ota_seq=1 in otadata[0]
+I (376) boot: Disabling RNG early entropy source...
+I (385) cpu_start: Multicore app
+I (395) cpu_start: Pro cpu start user code
+I (395) cpu_start: cpu freq: 160000000 Hz
+I (395) app_init: Application information:
+I (395) app_init: Project name:     smart_token_display
+I (400) app_init: App version:      a8f5798
+I (403) app_init: Compile time:     Jul  9 2026 13:25:55
+I (409) app_init: ELF file SHA256:  5d119b319...
+I (413) app_init: ESP-IDF:          v5.4.1-dirty
+I (417) efuse_init: Min chip rev:     v0.0
+I (421) efuse_init: Max chip rev:     v0.99 
+I (425) efuse_init: Chip rev:         v0.2
+I (429) heap_init: Initializing. RAM available for dynamic allocation:
+I (435) heap_init: At 3FCA6628 len 000430E8 (268 KiB): RAM
+I (440) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (445) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (451) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM
+I (457) spi_flash: detected chip: gd
+I (459) spi_flash: flash io: dio
+I (464) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (469) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (475) esp_core_dump_flash: Init core dump to flash
+I (480) esp_core_dump_flash: Found partition 'coredump' @ 12000 65536 bytes
+I (00:00:00.093) main_task: Started on CPU0
+I (00:00:00.113) main_task: Calling app_main()
+I (00:00:00.113) Main: Last reboot reason: Power On
+W (00:00:00.129) DEBUG: =============================================
+W (00:00:00.130) DEBUG: SMART TOKEN DISPLAY (OTA & Realtime Enabled) (a8f5798)
+W (00:00:00.131) DEBUG: =============================================
+I (00:00:00.138) Main: ========== Chip Information ===========================================
+I (00:00:00.146) Main: Chip model: ESP32-S3
+I (00:00:00.150) Main: CPU cores: 2
+I (00:00:00.153) Main: Silicon revision: 2
+I (00:00:00.157) Main: Flash size: 4 MB
+I (00:00:00.160) Main: ========== Program Version ============================================
+I (00:00:00.169) Main: [APP] Name: smart_token_display
+I (00:00:00.174) Main: [APP] Version: a8f5798
+I (00:00:00.178) Main: [APP] Compile Date: Jul  9 2026
+I (00:00:00.183) Main: [APP] Compile Time: 13:25:55
+I (00:00:00.187) Main: ========== Heap Information ===========================================
+I (00:00:00.196) Main: Total free heap: 314024 bytes
+I (00:00:00.200) Main: Minimum free heap since boot: 313672 bytes
+I (00:00:00.206) Main: Internal RAM free: 314024 bytes
+I (00:00:00.211) Main: ========== Stack Information ==========================================
+I (00:00:00.219) Main: Current task stack high water mark: 1864 bytes
+I (00:00:00.225) Main: ========== Flash Partition Information ================================
+I (00:00:00.234) Main: App partition size: 1638400 bytes
+I (00:00:00.239) Main: =======================================================================
+I (00:00:00.247) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.256) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.265) gpio: GPIO[12]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.274) gpio: GPIO[13]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.283) gpio: GPIO[18]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.293) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (00:00:00.328) token_display: USB Host library installed
+I (00:00:00.329) barcode_scanner: Initialized (terminator=0x0D, max_len=128)
+I (00:00:00.330) token_display: token_display started (0 events pending upload)
+I (00:00:00.338) pp: pp rom version: e7ae62f
+I (00:00:00.341) net80211: net80211 rom version: e7ae62f
+I (00:00:00.346) main_task: Returned from app_main()
+I (991) wifi:wifi driver task: 3fcbd9dc, prio:23, stack:6656, core=0
+I (1001) wifi:wifi firmware version: 79fa3f41ba
+I (1001) wifi:wifi certification version: v7.0
+I (1001) wifi:config NVS flash: enabled
+I (1011) wifi:config nano formatting: disabled
+I (1011) wifi:Init data frame dynamic rx buffer num: 32
+I (1011) wifi:Init static rx mgmt buffer num: 5
+I (1021) wifi:Init management short buffer num: 32
+I (1021) wifi:Init dynamic tx buffer num: 32
+I (1031) wifi:Init static tx FG buffer num: 2
+I (1031) wifi:Init static rx buffer size: 1600
+I (1041) wifi:Init static rx buffer num: 10
+I (1041) wifi:Init dynamic rx buffer num: 32
+I (00:00:00.407) wifi_init: rx ba win: 6
+I (00:00:00.410) wifi_init: accept mbox: 6
+I (00:00:00.414) wifi_init: tcpip mbox: 32
+I (00:00:00.417) wifi_init: udp mbox: 6
+I (00:00:00.421) wifi_init: tcp mbox: 6
+I (00:00:00.424) wifi_init: tcp tx win: 5760
+I (00:00:00.428) wifi_init: tcp rx win: 5760
+I (00:00:00.432) wifi_init: tcp mss: 1440
+I (00:00:00.436) wifi_init: WiFi IRAM OP enabled
+I (00:00:00.441) wifi_init: WiFi RX IRAM OP enabled
+I (00:00:00.445) Provisioning: Starting provisioning
+I (00:00:00.450) Provisioning: Development mode: using hard coded salt
+I (00:00:00.456) Provisioning: Development mode: using hard coded verifier
+I (00:00:00.464) phy_init: phy_version 700,8582a7fd,Feb 10 2025,20:13:11
+W (00:00:00.469) phy_init: failed to load RF calibration data (0x1102), falling back to full calibration
+I (00:00:00.507) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(2)
+I (1161) wifi:mode : sta (3c:dc:75:4c:be:f4)
+I (1161) wifi:enable tsf
+I (1161) wifi:mode : sta (3c:dc:75:4c:be:f4) + softAP (3c:dc:75:4c:be:f5)
+I (1161) wifi:Total power save buffer number: 16
+I (1161) wifi:Init max length of beacon: 752/752
+I (1171) wifi:Init max length of beacon: 752/752
+I (00:00:00.536) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (1171) wifi:Total power save buffer number: 16
+I (00:00:00.549) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+I (00:00:00.556) wifi_prov_mgr: Provisioning started with service name : ZT_TOKEN_DISPLAY_3CDC754CBEF4 
+I (00:00:00.565) Provisioning: Provisioning started
+I (00:00:00.565) Provisioning: If QR code is not visible, copy paste the below URL in a browser.
+https://espressif.github.io/esp-jumpstart/qrcode.html?data={"ver":"v1","name":"ZT_TOKEN_DISPLAY_3CDC754CBEF4","username":"wifiprov","pop":"abcd1234","transport":"softap"}
+I (1231) ESPNOW: espnow [version: 2.0] init
+I (00:00:00.597) ESPNOW: ready: gateway=3C:DC:75:4C:BD:C8 channel=1
+I (00:00:00.604) ESPNOW: re-pinned radio to channel 1 (router down?)
+W (5971) wifi:Haven't to connect to a suitable AP now!
+W (10971) wifi:Haven't to connect to a suitable AP now!
+W (15971) wifi:Haven't to connect to a suitable AP now!
+W (20971) wifi:Haven't to connect to a suitable AP now!
+I (22801) wifi:new:<1,0>, old:<1,0>, ap:<1,0>, sta:<0,0>, prof:1, snd_ch_cfg:0x0
+I (22801) wifi:station: a6:ec:74:43:5e:d6 join, AID=1, bgn, 20
+I (00:00:22.168) Provisioning: SoftAP transport: Connected!
+I (22861) wifi:<ba-add>idx:2 (ifx:1, a6:ec:74:43:5e:d6), tid:0, ssn:0, winSize:64
+I (00:00:22.394) esp_netif_lwip: DHCP server assigned IP to a client, IP is: 192.168.4.2
+W (25971) wifi:Haven't to connect to a suitable AP now!
+W (00:00:29.514) httpd_uri: httpd_uri: URI '/' not found
+W (00:00:29.515) httpd_txrx: httpd_resp_send_err: 404 Not Found - Nothing matches the given URI
+W (30971) wifi:Haven't to connect to a suitable AP now!
+I (00:00:33.044) security2: Using salt and verifier to generate public key...
+I (00:00:33.440) Provisioning: Secured session established!
+W (35971) wifi:Haven't to connect to a suitable AP now!
+W (40971) wifi:Haven't to connect to a suitable AP now!
+W (45971) wifi:Haven't to connect to a suitable AP now!
+W (47321) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (00:00:46.697) Provisioning: Received Wi-Fi credentials for SSID: Phani’s iPhone
+W (50971) wifi:Haven't to connect to a suitable AP now!
+I (51631) wifi:primary chan differ, old=1, new=6, start CSA timer
+I (52031) wifi:switch to channel 6
+I (52031) wifi:ap channel adjust o:1,0 n:6,0
+I (52031) wifi:new:<6,0>, old:<1,0>, ap:<6,0>, sta:<0,0>, prof:1, snd_ch_cfg:0x0
+I (52041) wifi:new:<6,0>, old:<6,0>, ap:<6,0>, sta:<6,0>, prof:1, snd_ch_cfg:0x0
+I (52041) wifi:state: init -> auth (0xb0)
+I (52051) wifi:state: auth -> assoc (0x0)
+I (52061) wifi:state: assoc -> run (0x10)
+I (52121) wifi:connected with Phani’s iPhone, aid = 1, channel 6, BW20, bssid = aa:55:9d:06:c7:ce
+I (52121) wifi:security: WPA2-PSK, phy: bgn, rssi: -49
+I (52141) wifi:pm start, type: 1
+
+I (52141) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (52141) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (52151) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (00:00:51.608) WIFI_MANAGER: Waiting for IP address from DHCP...
+I (00:00:52.598) Provisioning: Connected with IP Address:172.20.10.4
+I (00:00:52.599) esp_netif_handlers: sta ip: 172.20.10.4, mask: 255.255.255.240, gw: 172.20.10.1
+I (00:00:52.599) WIFI_MANAGER: IP address acquired! Proceeding with application setup.
+I (00:00:52.602) wifi_prov_mgr: STA Got IP
+I (00:00:52.614) Provisioning: Provisioning successful
+I (00:00:54.608) Main: Initializing SNTP
+I (05:30:54.609) Main: Waiting for system time to be set... (1/15)
+I (55671) wifi:station: a6:ec:74:43:5e:d6 leave, AID = 1, reason = 2, bss_flags is 33721443, bss:0x3fcc69cc
+I (55671) wifi:new:<6,0>, old:<6,0>, ap:<6,0>, sta:<6,0>, prof:1, snd_ch_cfg:0x0
+I (55671) wifi:<ba-del>idx:2, tid:0
+I (55681) wifi:mode : sta (3c:dc:75:4c:be:f4)
+I (05:30:55.049) wifi_prov_mgr: Provisioning stopped
+I (05:30:55.050) Provisioning: SoftAP transport: Disconnected!
+I (55871) wifi:<ba-add>idx:0 (ifx:0, aa:55:9d:06:c7:ce), tid:0, ssn:2, winSize:64
+I (05:30:56.608) Main: Waiting for system time to be set... (2/15)
+I (11:15:10.120) Main: System time is set.
+W (11:15:10.131) Main: Recorded new provisioning time: 1784094310
+W (11:15:10.132) websocket_client: `reconnect_timeout_ms` is not set, or it is less than or equal to zero, using default time out 10000 (milliseconds)
+W (11:15:10.140) websocket_client: `network_timeout_ms` is not set, or it is less than or equal to zero, using default time out 10000 (milliseconds)
+I (11:15:10.154) websocket_client: Started
+I (11:15:10.159) Supabase: Sending device health heartbeat: {"device_id":"3C:DC:75:4C:BE:F4","wifi_ssid":"Phani’s iPhone","device_type":"token_display","name":null,"wifi_rssi":-53,"uptime_seconds":58,"firmware_version":"a8f5798","last_reboot_reason":"Power On","brownout_count":0,"device_timestamp":1784094310,"last_provisioned_at":"2026-07-15T05:45:10Z"}
+I (11:15:11.146) esp-x509-crt-bundle: Certificate validated
+I (11:15:12.398) Supabase: WebSocket Connected. Joining Topics...
+I (11:15:12.549) esp-x509-crt-bundle: Certificate validated
+I (11:15:14.295) Supabase: Heartbeat sent successfully (HTTP 201, SSID: Phani’s iPhone)
+I (11:15:15.243) esp-x509-crt-bundle: Certificate validated
+I (11:15:16.139) Supabase: HTTP update check: got system_control row
+E (11:15:23.729) HUB: Root port reset failed
+E (11:15:24.039) HUB: Root port reset failed
+E (11:15:24.349) HUB: Root port reset failed
+E (11:15:24.659) HUB: Root port reset failed
+E (11:15:24.969) HUB: Root port reset failed
+E (11:15:25.279) HUB: Root port reset failed
+E (11:15:25.589) HUB: Root port reset failed
+E (11:15:25.899) HUB: Root port reset failed
+E (11:15:26.209) HUB: Root port reset failed
+E (11:15:26.519) HUB: Root port reset failed
+E (11:15:26.829) HUB: Root port reset failed
+E (11:15:27.139) HUB: Root port reset failed
+E (11:15:27.449) HUB: Root port reset failed
+E (11:15:27.759) HUB: Root port reset failed
+E (11:15:28.069) HUB: Root port reset failed
+E (11:15:28.379) HUB: Root port reset failed
+E (11:15:28.689) HUB: Root port reset failed
+E (11:15:28.999) HUB: Root port reset failed
+E (11:15:29.309) HUB: Root port reset failed
+E (11:15:29.619) HUB: Root port reset failed
+E (11:15:29.929) HUB: Root port reset failed
+E (11:15:30.239) HUB: Root port reset failed
+E (11:15:30.549) HUB: Root port reset failed
+E (11:15:30.859) HUB: Root port reset failed
+E (11:15:31.169) HUB: Root port reset failed
+E (11:15:31.479) HUB: Root port reset failed
+E (11:15:31.789) HUB: Root port reset failed
+E (11:15:32.099) HUB: Root port reset failed
+E (11:15:32.409) HUB: Root port reset failed
+E (11:15:32.719) HUB: Root port reset failed
+E (11:15:33.029) HUB: Root port reset failed
+E (11:15:33.339) HUB: Root port reset failed
+E (11:15:33.649) HUB: Root port reset failed
+E (11:15:33.959) HUB: Root port reset failed
+E (11:15:34.269) HUB: Root port reset failed
+E (11:15:34.579) HUB: Root port reset failed
+E (11:15:34.889) HUB: Root port reset failed
+E (11:15:35.200) HUB: Root port reset failed
+E (11:15:35.509) HUB: Root port reset failed
+E (11:15:35.819) HUB: Root port reset failed
+E (11:15:36.129) HUB: Root port reset failed
+E (11:15:36.439) HUB: Root port reset failed
+E (11:15:36.749) HUB: Root port reset failed
+E (11:15:37.059) HUB: Root port reset failed
+E (11:15:37.369) HUB: Root port reset failed
+E (11:15:37.679) HUB: Root port reset failed
+E (11:15:37.989) HUB: Root port reset failed
+E (11:15:38.299) HUB: Root port reset failed
+E (11:15:38.609) HUB: Root port reset failed
+E (11:15:38.919) HUB: Root port reset failed
+E (11:15:39.229) HUB: Root port reset failed
+
+zenithtek@zenithtek-HP-Pavilion-Laptop-14-dv2xxx:~/Display_Audio_Project/smart_token_display$ idf.py -p /dev/ttyUSB0 monitor
+

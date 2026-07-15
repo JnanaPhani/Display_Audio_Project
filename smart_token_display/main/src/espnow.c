@@ -1,5 +1,6 @@
 #include "espnow.h"
 #include "main.h"
+#include "token_display.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -48,6 +49,31 @@ static void on_send(const uint8_t *mac, esp_now_send_status_t status) {
   ESP_LOGD(TAG_NOW, "send cb: status=%d", status);
 }
 
+/** @brief Receive callback: parse the scan message and sync display list. */
+static void on_recv(const esp_now_recv_info_t *recv_info, const uint8_t *data, int len) {
+  if (data == NULL || len < sizeof(espnow_scan_msg_t)) {
+    return;
+  }
+
+  espnow_scan_msg_t *msg = (espnow_scan_msg_t *)data;
+  if (msg->version != ESPNOW_PROTO_VERSION) {
+    return;
+  }
+
+  // If this message originated from ourselves, ignore it
+  uint8_t my_mac[6];
+  esp_read_mac(my_mac, ESP_MAC_WIFI_STA);
+  if (memcmp(msg->device_mac, my_mac, 6) == 0) {
+    return;
+  }
+
+  ESP_LOGI(TAG_NOW, "Sync event recv from gateway: display_num=%ld status=%d",
+           (long)msg->display_num, msg->status);
+
+  // Sync token display state
+  token_display_sync_event(msg->order_id, msg->display_num, msg->status);
+}
+
 esp_err_t espnow_init(void) {
   if (s_ready) {
     return ESP_OK; /* idempotent */
@@ -60,6 +86,7 @@ esp_err_t espnow_init(void) {
   }
 
   esp_now_register_send_cb(on_send);
+  esp_now_register_recv_cb(on_recv);
 
   parse_gateway_mac(s_gateway_mac);
 
